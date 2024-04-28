@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+// Structure to represent each item
+struct Item {
+ int value;
+ int weight;
+};
+// Comparison function to sort items based on value per unit weight
+int compare(const void *a, const void *b) {
+ double ratio1 = (double)((struct Item *)a)->value / ((struct Item *)a)->weight;
+ double ratio2 = (double)((struct Item *)b)->value / ((struct Item *)b)->weight;
+ if (ratio1 < ratio2)
+ return 1; // Sort in descending order
+ else if (ratio1 > ratio2)
+ return -1;
+ else
+ return 0;
+}
+// Function to solve the Fractional Knapsack Problem
+void fractionalKnapsack(struct Item items[], int n, int capacity) {
+ // Sort items based on value per unit weight
+ qsort(items, n, sizeof(struct Item), compare);
+ double totalValue = 0.0;
+ int currentWeight = 0;
+ // Iterate through sorted items and add them to the knapsack
+ for (int i = 0; i < n; i++) {
+ // If adding the entire item is possible
+ if (currentWeight + items[i].weight <= capacity) {
+ currentWeight += items[i].weight;
+ totalValue += items[i].value;
+ } else { // If adding only a fraction of the item is possible
+ int remainingWeight = capacity - currentWeight;
+ totalValue += (double)items[i].value * remainingWeight / items[i].weight;
+ break;
+ }
+ }
+ // Print the total value of items in the knapsack
+ printf("Total value in knapsack: %.2lf\n", totalValue);
+}
+int main() {
+ // Example items
+ struct Item items[] = {{60, 10}, {100, 20}, {120, 30}};
+ int n = sizeof(items) / sizeof(items[0]);
+ int capacity = 50;
+ // Solve the Fractional Knapsack Problem
+ fractionalKnapsack(items, n, capacity);
+ return 0;
+} 
